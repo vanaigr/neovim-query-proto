@@ -491,6 +491,31 @@ local predicate_handlers = {
 predicate_handlers['vim-match?'] = predicate_handlers['match?']
 predicate_handlers['any-vim-match?'] = predicate_handlers['any-match?']
 
+local times = {} ---@type table<string, number>
+for k, f in pairs(predicate_handlers) do
+  times[k] = 0
+  predicate_handlers[k] = function(...)
+    local start = vim.uv.hrtime()
+    local ret = { f(...) }
+    times[k] = times[k] + (vim.uv.hrtime() - start) / 1000000
+    return unpack(ret)
+  end
+end
+
+function M.times()
+  local all_zeros = true
+  local result = vim.inspect(times)
+  for k, _ in pairs(times) do
+    if times[k] > 0 then
+      all_zeros = false
+    end
+    times[k] = 0
+  end
+  if not all_zeros then
+    return result
+  end
+end
+
 ---@nodoc
 ---@class vim.treesitter.query.TSMetadata
 ---@field range? Range

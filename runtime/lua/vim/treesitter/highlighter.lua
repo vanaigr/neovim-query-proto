@@ -394,10 +394,18 @@ function TSHighlighter._on_win(_, _win, buf, topline, botline)
   return true
 end
 
+local start
+
 api.nvim_set_decoration_provider(ns, {
   on_win = TSHighlighter._on_win,
   on_line = TSHighlighter._on_line,
   _on_spell_nav = TSHighlighter._on_spell_nav,
+  on_start = function()
+    start = vim.uv.hrtime()
+  end,
+  on_end = function()
+    print('redrawn', (vim.uv.hrtime() - start) / 1000000, vim.treesitter.query.times())
+  end,
 })
 
 return TSHighlighter
