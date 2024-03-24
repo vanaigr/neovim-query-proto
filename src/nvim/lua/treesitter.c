@@ -724,6 +724,7 @@ static struct luaL_Reg node_meta[] = {
   { "descendant_for_range", node_descendant_for_range },
   { "named_descendant_for_range", node_named_descendant_for_range },
   { "parent", node_parent },
+  { "closer_parent", node_closer_parent },
   { "iter_children", node_iter_children },
   { "next_sibling", node_next_sibling },
   { "prev_sibling", node_prev_sibling },
@@ -1047,6 +1048,15 @@ static int node_parent(lua_State *L)
 {
   TSNode node = node_check(L, 1);
   TSNode parent = ts_node_parent(node);
+  push_node(L, parent, 1);
+  return 1;
+}
+
+static int node_closer_parent(lua_State *L)
+{
+  TSNode node = node_check(L, 1);
+  TSNode from = node_check(L, 2);
+  TSNode parent = ts_node_closer_parent(node, from);
   push_node(L, parent, 1);
   return 1;
 }

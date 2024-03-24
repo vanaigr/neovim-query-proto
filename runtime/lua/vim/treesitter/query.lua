@@ -461,12 +461,19 @@ local predicate_handlers = {
         ancestor_types[type] = true
       end
 
-      local cur = node:parent()
+      --local cur = node:parent()
+      --while cur do
+      --  if ancestor_types[cur:type()] then
+      --    return true
+      --  end
+      --  cur = cur:parent()
+      --end
+      local cur = node:tree():root()
       while cur do
         if ancestor_types[cur:type()] then
           return true
         end
-        cur = cur:parent()
+        cur = node:closer_parent(cur)
       end
     end
     return false
